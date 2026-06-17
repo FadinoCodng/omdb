@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\MovieController;
 use Illuminate\Support\Facades\App;
 
 // Redirect root ke login
@@ -33,17 +34,16 @@ Route::middleware('guest.custom')->group(function () {
 
 // Halaman yang hanya bisa diakses jika SUDAH login
 Route::middleware('checklogin')->group(function () {
-    Route::get('/dashboard', function () {
-        return view('dashboard.index');
-    })->name('dashboard');
+    Route::get('/dashboard', [MovieController::class, 'dashboard'])->name('dashboard');
 
-    Route::get('/favorites', function () {
-        return view('favorit.favorites');
-    })->name('favorites');
+    Route::get('/search', [MovieController::class, 'searchPage'])->name('search');
 
-    Route::get('/search', function () {
-        return view('search.search');
-    })->name('search');
+    Route::get('/favorites', [MovieController::class, 'favorites'])->name('favorites');
+
+    // AJAX API endpoints
+    Route::get('/api/movies/search', [MovieController::class, 'search'])->name('api.movies.search');
+    Route::get('/api/movies/{imdbId}', [MovieController::class, 'detail'])->name('api.movies.detail');
+    Route::post('/favorites/toggle', [MovieController::class, 'toggleFavorite'])->name('favorites.toggle');
 
     // Logout
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
